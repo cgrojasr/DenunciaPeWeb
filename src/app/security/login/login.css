@@ -13,6 +13,10 @@
   background: var(--green-dark);
 }
 
+.login-card {
+  max-width: 900px;
+}
+
 .brand,
 h1 {
   color: var(--green-dark);

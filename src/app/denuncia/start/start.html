@@ -1,0 +1,155 @@
+<app-header />
+
+<div class="denuncia-page py-4">
+  <div class="container">
+    <h1 class="h3 fw-bold mb-4">Formulario de denuncia</h1>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <fieldset class="card mb-4" formGroupName="denunciante">
+        <div class="card-body">
+          <legend class="h5">Datos del denunciante</legend>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="nombres" class="form-label">Nombres</label>
+              <input id="nombres" type="text" class="form-control" formControlName="nombres" />
+              @if (submitted && denunciante.get('nombres')?.invalid) {
+                <p class="text-danger small mb-0">Los nombres son obligatorios.</p>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="apellidos" class="form-label">Apellidos</label>
+              <input id="apellidos" type="text" class="form-control" formControlName="apellidos" />
+              @if (submitted && denunciante.get('apellidos')?.invalid) {
+                <p class="text-danger small mb-0">Los apellidos son obligatorios.</p>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="documento" class="form-label">Documento de identidad</label>
+              <input id="documento" type="text" class="form-control" formControlName="documento" readonly />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4" formGroupName="contacto">
+        <div class="card-body">
+          <legend class="h5">Datos de contacto</legend>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="telefono" class="form-label">Número telefónico</label>
+              <input id="telefono" type="text" class="form-control" formControlName="telefono" />
+              @if (submitted && contacto.get('telefono')?.invalid) {
+                <p class="text-danger small mb-0">Ingrese un teléfono válido de 9 dígitos.</p>
+              }
+            </div>
+
+            <div class="col-md-8">
+              <label for="direccion" class="form-label">Dirección</label>
+              <input id="direccion" type="text" class="form-control" formControlName="direccion" />
+              @if (submitted && contacto.get('direccion')?.invalid) {
+                <p class="text-danger small mb-0">La dirección es obligatoria.</p>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="distrito" class="form-label">Distrito</label>
+              <input id="distrito" type="text" class="form-control" formControlName="distrito" />
+              @if (submitted && contacto.get('distrito')?.invalid) {
+                <p class="text-danger small mb-0">El distrito es obligatorio.</p>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="provincia" class="form-label">Provincia</label>
+              <input id="provincia" type="text" class="form-control" formControlName="provincia" />
+              @if (submitted && contacto.get('provincia')?.invalid) {
+                <p class="text-danger small mb-0">La provincia es obligatoria.</p>
+              }
+            </div>
+
+            <div class="col-md-4">
+              <label for="region" class="form-label">Región</label>
+              <input id="region" type="text" class="form-control" formControlName="region" />
+              @if (submitted && contacto.get('region')?.invalid) {
+                <p class="text-danger small mb-0">La región es obligatoria.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4">
+        <div class="card-body">
+          <legend class="h5">Narración de los hechos</legend>
+
+          <label for="narracion" class="form-label">Descripción clara y detallada</label>
+          <textarea id="narracion" class="form-control" rows="4" formControlName="narracion"></textarea>
+          @if (submitted && form.get('narracion')?.invalid) {
+            <p class="text-danger small mb-0">Describa los hechos con al menos 20 caracteres.</p>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4" formGroupName="incidente">
+        <div class="card-body">
+          <legend class="h5">Fecha y hora del incidente</legend>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="fecha" class="form-label">Fecha</label>
+              <input id="fecha" type="date" class="form-control" formControlName="fecha" />
+              @if (submitted && incidente.get('fecha')?.invalid) {
+                <p class="text-danger small mb-0">La fecha es obligatoria.</p>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="hora" class="form-label">Hora</label>
+              <input id="hora" type="time" class="form-control" formControlName="hora" />
+              @if (submitted && incidente.get('hora')?.invalid) {
+                <p class="text-danger small mb-0">La hora es obligatoria.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4" formGroupName="lugar">
+        <div class="card-body">
+          <legend class="h5">Lugar del suceso</legend>
+
+          <label for="referencia" class="form-label">Dirección exacta o referencias</label>
+          <input id="referencia" type="text" class="form-control" formControlName="referencia" />
+          @if (submitted && lugar.get('referencia')?.invalid) {
+            <p class="text-danger small mb-0">Indique la dirección o una referencia del lugar.</p>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4" formGroupName="denunciado">
+        <div class="card-body">
+          <legend class="h5">Datos del denunciado (opcional)</legend>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="nombreOApodo" class="form-label">Nombre o apodo</label>
+              <input id="nombreOApodo" type="text" class="form-control" formControlName="nombreOApodo" />
+            </div>
+
+            <div class="col-md-6">
+              <label for="caracteristicas" class="form-label">Características físicas</label>
+              <input id="caracteristicas" type="text" class="form-control" formControlName="caracteristicas" />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn btn-siguiente px-4">Siguiente</button>
+    </form>
+  </div>
+</div>

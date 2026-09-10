@@ -4,6 +4,7 @@
 }
 
 .start-page {
+  min-height: calc(100vh - 56px);
   background: #006414;
 }
 

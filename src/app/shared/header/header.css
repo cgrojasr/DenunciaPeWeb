@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.app-navbar {
+  background: #006414;
+}
+
+.app-navbar .navbar-brand {
+  color: #fff;
+  font-weight: 700;
+}
+
+.app-navbar .nav-link {
+  color: #5ccb5f;
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.active {
+  color: #fff;
+}
+
+.app-navbar .navbar-toggler {
+  border-color: #5ccb5f;
+}
+
+.app-navbar .navbar-toggler-icon {
+  filter: invert(1);
+}
