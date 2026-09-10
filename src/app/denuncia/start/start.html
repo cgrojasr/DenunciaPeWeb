@@ -57,26 +57,53 @@
             </div>
 
             <div class="col-md-4">
-              <label for="distrito" class="form-label">Distrito</label>
-              <input id="distrito" type="text" class="form-control" formControlName="distrito" />
-              @if (submitted && contacto.get('distrito')?.invalid) {
-                <p class="text-danger small mb-0">El distrito es obligatorio.</p>
+              <label for="region" class="form-label">Región</label>
+              <select id="region" class="form-select" formControlName="region" [disabled]="regionesCargando" (change)="onRegionChange($any($event.target).value)">
+                @if (regionesCargando) {
+                  <option value="">Cargando regiones...</option>
+                } @else {
+                  <option value="">Seleccione una región</option>
+                }
+                @for (region of regiones; track region.codigo) {
+                  <option [value]="region.codigo">{{ region.nombre }}</option>
+                }
+              </select>
+              @if (submitted && contacto.get('region')?.invalid) {
+                <p class="text-danger small mb-0">La región es obligatoria.</p>
               }
             </div>
 
             <div class="col-md-4">
               <label for="provincia" class="form-label">Provincia</label>
-              <input id="provincia" type="text" class="form-control" formControlName="provincia" />
+              <select id="provincia" class="form-select" formControlName="provincia" (change)="onProvinciaChange($any($event.target).value)">
+                @if (provinciasCargando) {
+                  <option value="">Cargando provincias...</option>
+                } @else {
+                  <option value="">Seleccione una provincia</option>
+                }
+                @for (provincia of provincias; track provincia.codigo) {
+                  <option [value]="provincia.codigo">{{ provincia.nombre }}</option>
+                }
+              </select>
               @if (submitted && contacto.get('provincia')?.invalid) {
                 <p class="text-danger small mb-0">La provincia es obligatoria.</p>
               }
             </div>
 
             <div class="col-md-4">
-              <label for="region" class="form-label">Región</label>
-              <input id="region" type="text" class="form-control" formControlName="region" />
-              @if (submitted && contacto.get('region')?.invalid) {
-                <p class="text-danger small mb-0">La región es obligatoria.</p>
+              <label for="distrito" class="form-label">Distrito</label>
+              <select id="distrito" class="form-select" formControlName="distrito">
+                @if (distritosCargando) {
+                  <option value="">Cargando distritos...</option>
+                } @else {
+                  <option value="">Seleccione un distrito</option>
+                }
+                @for (distrito of distritos; track distrito.codigo) {
+                  <option [value]="distrito.codigo">{{ distrito.nombre }}</option>
+                }
+              </select>
+              @if (submitted && contacto.get('distrito')?.invalid) {
+                <p class="text-danger small mb-0">El distrito es obligatorio.</p>
               }
             </div>
           </div>
