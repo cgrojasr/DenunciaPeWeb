@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.start-page {
+  background: #006414;
+}
+
+.btn-logout {
+  background: #5ccb5f;
+  color: #121012;
+  font-weight: 700;
+}
+
+.btn-logout:hover {
+  background: #009929;
+  color: #fff;
+}

@@ -1,0 +1,65 @@
+:host {
+  --green-dark: #006414;
+  --green: #009929;
+  --green-light: #5ccb5f;
+  --black: #121012;
+  --gray: #413e40;
+
+  display: block;
+  min-height: 100vh;
+}
+
+.login-page {
+  background: var(--green-dark);
+}
+
+.brand,
+h1 {
+  color: var(--green-dark);
+}
+
+.login-form {
+  background: #f2f7f2;
+}
+
+.form-control {
+  border: none;
+  border-bottom: 2px solid var(--green-light);
+  border-radius: 0;
+}
+
+.form-control:focus {
+  border-bottom-color: var(--green);
+  box-shadow: none;
+}
+
+.btn-login {
+  background: var(--green);
+  color: #fff;
+}
+
+.btn-login:hover:not(:disabled) {
+  background: var(--green-dark);
+  color: #fff;
+}
+
+.btn-login:disabled {
+  background: var(--green-light);
+}
+
+.login-illustration {
+  background: var(--black);
+  color: var(--green-light);
+}
+
+.illustration-box {
+  width: 220px;
+  background: var(--green);
+}
+
+.fake-field {
+  background: var(--green-light);
+  color: var(--black);
+  font-size: 0.9rem;
+}
+
