@@ -2,6 +2,8 @@
 
 <div class="denuncia-page py-4">
   <div class="container">
+    <app-indicador-pasos [pasoActual]="1" />
+
     <h1 class="h3 fw-bold mb-4">Formulario de denuncia</h1>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>

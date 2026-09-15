@@ -1,0 +1,200 @@
+<app-header />
+
+<div class="localizacion-page py-4">
+  <div class="container">
+    <app-indicador-pasos [pasoActual]="2" />
+
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+          <div>
+            <h1 class="h3 fw-bold mb-1 text-success-dark">Registrar ubicación del incidente</h1>
+            <p class="text-muted mb-0">
+              Haga clic en el mapa interactivo para indicar el lugar exacto del suceso o use la geolocalización automática.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-outline-success d-flex align-items-center gap-2 fw-semibold"
+            (click)="usarUbicacionActual()"
+            [disabled]="geolocalizando"
+            aria-label="Usar ubicación actual"
+          >
+            @if (geolocalizando) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Detectando...</span>
+            } @else {
+              <span>📍</span>
+              <span>Usar mi ubicación actual</span>
+            }
+          </button>
+        </div>
+
+        @if (mensajeInfo) {
+          <div class="alert alert-info py-2 d-flex align-items-center gap-2" role="alert">
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+            <div>{{ mensajeInfo }}</div>
+          </div>
+        }
+
+        @if (mensajeError) {
+          <div class="alert alert-danger py-2 d-flex align-items-center justify-content-between" role="alert">
+            <div>{{ mensajeError }}</div>
+            <button type="button" class="btn-close" (click)="mensajeError = null" aria-label="Cerrar"></button>
+          </div>
+        }
+
+        <!-- Buscador auxiliar en el mapa -->
+        <div class="input-group mb-3 search-address-group">
+          <span class="input-group-text bg-white">🔍</span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar calle, avenida o lugar en el mapa..."
+            [(ngModel)]="busquedaTexto"
+            (keyup.enter)="buscarPorDireccion()"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="buscarPorDireccion()"
+            [disabled]="geocodificando"
+          >
+            Buscar en mapa
+          </button>
+        </div>
+
+        <!-- Contenedor del Mapa -->
+        <div class="map-wrapper mb-4 position-relative">
+          @if (apiCargada) {
+            <google-map
+              height="420px"
+              width="100%"
+              [center]="center"
+              [zoom]="zoom"
+              [options]="mapOptions"
+              (mapClick)="onMapClick($event)"
+            >
+              @if (markerPosition) {
+                <map-marker
+                  [position]="markerPosition"
+                  [options]="markerOptions"
+                  (mapDragend)="onMarkerDragEnd($event)"
+                />
+              }
+            </google-map>
+          } @else {
+            <!-- Fallback mientras carga o sin API Key -->
+            <div
+              class="map-placeholder d-flex flex-column align-items-center justify-content-center text-center p-4"
+              (click)="seleccionarUbicacionDefecto()"
+            >
+              <div class="spinner-border text-success mb-3" role="status"></div>
+              <h6 class="fw-bold text-secondary">Cargando mapa interactivo...</h6>
+              <p class="text-muted small mb-0">
+                Si el mapa no carga, puede ingresar la dirección directamente o usar geolocalización.
+              </p>
+            </div>
+          }
+
+          @if (geocodificando) {
+            <div class="map-loading-overlay d-flex align-items-center justify-content-center">
+              <div class="bg-white px-3 py-2 rounded shadow-sm d-flex align-items-center gap-2">
+                <span class="spinner-border spinner-border-sm text-success" role="status"></span>
+                <span class="small fw-semibold">Obteniendo dirección...</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Formulario con datos de ubicación -->
+        <form [formGroup]="form" (ngSubmit)="avanzarSiguientePaso()" novalidate>
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="direccion" class="form-label fw-bold text-dark">
+                Dirección detectada del incidente <span class="text-danger">*</span>
+              </label>
+              <input
+                id="direccion"
+                type="text"
+                class="form-control form-control-lg"
+                formControlName="direccion"
+                placeholder="Seleccione un punto en el mapa o ingrese la dirección"
+                [class.is-invalid]="submitted && form.get('direccion')?.invalid"
+              />
+              @if (submitted && form.get('direccion')?.hasError('required')) {
+                <div class="invalid-feedback">
+                  Debe seleccionar un punto en el mapa o ingresar una dirección válida.
+                </div>
+              }
+              @if (submitted && form.get('direccion')?.hasError('minlength')) {
+                <div class="invalid-feedback">
+                  La dirección debe tener al menos 5 caracteres.
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label for="referenciaAdicional" class="form-label fw-semibold">
+                Referencia adicional del lugar (opcional)
+              </label>
+              <input
+                id="referenciaAdicional"
+                type="text"
+                class="form-control"
+                formControlName="referenciaAdicional"
+                placeholder="Ej. Frente a la farmacia, esquina con semáforo..."
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Coordenadas geográficas</label>
+              <div class="d-flex gap-2">
+                <div class="input-group">
+                  <span class="input-group-text bg-light small">Lat</span>
+                  <input
+                    type="text"
+                    class="form-control bg-light"
+                    [value]="form.get('latitud')?.value !== null ? form.get('latitud')?.value : 'No seleccionada'"
+                    readonly
+                  />
+                </div>
+                <div class="input-group">
+                  <span class="input-group-text bg-light small">Lng</span>
+                  <input
+                    type="text"
+                    class="form-control bg-light"
+                    [value]="form.get('longitud')?.value !== null ? form.get('longitud')?.value : 'No seleccionada'"
+                    readonly
+                  />
+                </div>
+              </div>
+              @if (submitted && (form.get('latitud')?.invalid || !markerPosition)) {
+                <p class="text-danger small mt-1 mb-0">
+                  Debe marcar la ubicación del incidente en el mapa.
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+            <button
+              type="button"
+              class="btn btn-outline-secondary px-4 fw-semibold"
+              (click)="volverPasoAnterior()"
+            >
+              ← Atrás
+            </button>
+            <button
+              type="submit"
+              class="btn btn-siguiente px-4 fw-bold"
+            >
+              Siguiente (Evidencias) →
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

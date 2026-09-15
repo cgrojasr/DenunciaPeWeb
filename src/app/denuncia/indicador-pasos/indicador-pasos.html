@@ -1,0 +1,22 @@
+<div class="d-flex justify-content-center mb-4">
+  <div class="steps-container d-flex align-items-center gap-3">
+    @for (paso of pasos; track paso.numero; let isLast = $last) {
+      <div class="step-item text-center">
+        @if (paso.numero < pasoActual) {
+          <div class="step-badge step-completed mx-auto">✓</div>
+          <span class="small fw-semibold text-muted">{{ paso.titulo }}</span>
+        } @else if (paso.numero === pasoActual) {
+          <div class="step-badge step-active mx-auto">{{ paso.numero }}</div>
+          <span class="small fw-bold text-success-emphasis">{{ paso.titulo }}</span>
+        } @else {
+          <div class="step-badge step-pending mx-auto">{{ paso.numero }}</div>
+          <span class="small fw-semibold text-muted">{{ paso.titulo }}</span>
+        }
+      </div>
+
+      @if (!isLast) {
+        <div class="step-divider" [class.completed]="paso.numero < pasoActual"></div>
+      }
+    }
+  </div>
+</div>

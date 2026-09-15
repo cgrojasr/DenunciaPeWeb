@@ -2,11 +2,6 @@
   display: block;
 }
 
-.denuncia-page {
-  background: #f2f7f2;
-  min-height: calc(100vh - 56px);
-}
-
 .steps-container {
   background: #ffffff;
   padding: 10px 24px;
@@ -30,6 +25,11 @@
   margin-bottom: 4px;
 }
 
+.step-completed {
+  background-color: #009929;
+  color: #fff;
+}
+
 .step-active {
   background-color: #006414;
   color: #fff;
@@ -48,18 +48,6 @@
   margin-bottom: 20px;
 }
 
-legend {
-  color: #006414;
-  font-weight: 700;
-}
-
-.btn-siguiente {
-  background: #009929;
-  color: #fff;
-  font-weight: 700;
-}
-
-.btn-siguiente:hover {
-  background: #006414;
-  color: #fff;
+.step-divider.completed {
+  background-color: #009929;
 }

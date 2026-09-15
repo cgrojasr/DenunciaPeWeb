@@ -1,17 +1,20 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../security/auth.service';
 import { Header } from '../../shared/header/header';
+import { IndicadorPasos } from '../indicador-pasos/indicador-pasos';
 import { Distrito, Provincia, Region, UbigeoService } from '../../services/ubigeo-service';
+import { DenunciaService } from '../../services/denuncia.service';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, Header],
+  imports: [ReactiveFormsModule, Header, IndicadorPasos],
   selector: 'app-start',
   styleUrl: './start.css',
   templateUrl: './start.html',
 })
-export class Start {
+export class Start implements OnInit {
   submitted = false;
   regiones: Region[] = [];
   regionesCargando = true;
@@ -25,6 +28,8 @@ export class Start {
     private fb: FormBuilder,
     private authService: AuthService,
     private ubigeoService: UbigeoService,
+    private denunciaService: DenunciaService,
+    private router: Router,
     private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
@@ -57,10 +62,40 @@ export class Start {
   }
 
   ngOnInit(): void {
+    const estado = this.denunciaService.obtenerEstado();
+    if (estado.denunciante) {
+      this.denunciante.patchValue({
+        nombres: estado.denunciante.nombres,
+        apellidos: estado.denunciante.apellidos,
+      });
+    }
+    if (estado.narracion) {
+      this.form.patchValue({ narracion: estado.narracion });
+    }
+    if (estado.incidente) {
+      this.incidente.patchValue(estado.incidente);
+    }
+    if (estado.lugar) {
+      this.lugar.patchValue(estado.lugar);
+    }
+    if (estado.denunciado) {
+      this.denunciado.patchValue(estado.denunciado);
+    }
+
     this.ubigeoService.obtenerRegiones().subscribe({
       next: (regiones) => {
         this.regiones = regiones;
         this.regionesCargando = false;
+
+        if (estado.contacto?.region) {
+          this.contacto.patchValue({
+            telefono: estado.contacto.telefono,
+            direccion: estado.contacto.direccion,
+            region: estado.contacto.region,
+          });
+          this.onRegionChange(estado.contacto.region);
+        }
+
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
@@ -92,6 +127,13 @@ export class Start {
         this.provincias = provincias;
         this.provinciasCargando = false;
         provinciaControl?.enable();
+
+        const estado = this.denunciaService.obtenerEstado();
+        if (estado.contacto?.provincia && provincias.some((p) => p.codigo === estado.contacto?.provincia)) {
+          this.contacto.patchValue({ provincia: estado.contacto.provincia });
+          this.onProvinciaChange(estado.contacto.provincia);
+        }
+
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
@@ -120,6 +162,12 @@ export class Start {
         this.distritos = distritos;
         this.distritosCargando = false;
         distritoControl?.enable();
+
+        const estado = this.denunciaService.obtenerEstado();
+        if (estado.contacto?.distrito && distritos.some((d) => d.codigo === estado.contacto?.distrito)) {
+          this.contacto.patchValue({ distrito: estado.contacto.distrito });
+        }
+
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
@@ -158,6 +206,15 @@ export class Start {
       return;
     }
 
-    // La conexión con el servicio de registro se implementará en un paso posterior
+    this.denunciaService.guardarDatosIniciales({
+      denunciante: this.denunciante.getRawValue(),
+      contacto: this.contacto.getRawValue(),
+      narracion: this.form.get('narracion')?.value,
+      incidente: this.incidente.value,
+      lugar: this.lugar.value,
+      denunciado: this.denunciado.value,
+    });
+
+    this.router.navigate(['/denuncia/localizacion']);
   }
 }

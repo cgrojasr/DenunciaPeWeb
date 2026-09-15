@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.evidencia-page {
+  background: #f2f7f2;
+  min-height: calc(100vh - 56px);
+}
+
+.text-success-dark {
+  color: #006414;
+}
+

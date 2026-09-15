@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.localizacion-page {
+  background: #f2f7f2;
+  min-height: calc(100vh - 56px);
+}
+
+.text-success-dark {
+  color: #006414;
+}
+
+.map-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.map-placeholder {
+  height: 420px;
+  background-color: #eef2f3;
+  cursor: pointer;
+}
+
+.map-loading-overlay {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.btn-siguiente {
+  background: #009929;
+  color: #fff;
+}
+
+.btn-siguiente:hover {
+  background: #006414;
+  color: #fff;
+}
+
+.search-address-group {
+  max-width: 600px;
+}
