@@ -20,5 +20,6 @@ export class IndicadorPasos {
     { numero: 1, titulo: '1. Datos' },
     { numero: 2, titulo: '2. Ubicación' },
     { numero: 3, titulo: '3. Evidencias' },
+    { numero: 4, titulo: '4. Resumen' },
   ];
 }

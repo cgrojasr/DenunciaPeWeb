@@ -35,6 +35,12 @@ export interface UbicacionIncidente {
   referenciaAdicional?: string;
 }
 
+export interface EvidenciaArchivo {
+  nombre: string;
+  tamano: number;
+  tipo: string;
+}
+
 export interface EstadoDenuncia {
   denunciante?: DatosDenunciante;
   contacto?: DatosContacto;
@@ -43,6 +49,7 @@ export interface EstadoDenuncia {
   lugar?: DatosLugar;
   denunciado?: DatosDenunciado;
   ubicacion?: UbicacionIncidente;
+  evidencias?: EvidenciaArchivo[];
 }
 
 @Injectable({
@@ -62,6 +69,13 @@ export class DenunciaService {
     this.estado = {
       ...this.estado,
       ubicacion,
+    };
+  }
+
+  guardarEvidencias(evidencias: EvidenciaArchivo[]): void {
+    this.estado = {
+      ...this.estado,
+      evidencias,
     };
   }
 

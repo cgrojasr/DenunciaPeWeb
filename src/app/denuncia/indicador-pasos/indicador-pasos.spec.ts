@@ -26,7 +26,7 @@ describe('IndicadorPasos', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     const badges = compiled.querySelectorAll('.step-badge');
-    expect(badges.length).toBe(3);
+    expect(badges.length).toBe(4);
 
     // Paso 1: completado
     expect(badges[0].classList.contains('step-completed')).toBe(true);

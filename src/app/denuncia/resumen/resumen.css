@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.resumen-page {
+  background: #f2f7f2;
+  min-height: calc(100vh - 56px);
+}
+
+.text-success-dark {
+  color: #006414;
+}
+
+.campo-resumen {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.campo-invalido {
+  border-color: #dc3545;
+  background: #fff5f5;
+}
+
+.confirmacion-icono {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #009929;
+  color: #fff;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

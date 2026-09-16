@@ -7,10 +7,52 @@
     <div class="card shadow-sm border-0 mb-4">
       <div class="card-body p-4">
         <h1 class="h3 fw-bold mb-3 text-success-dark">Adjuntar evidencias</h1>
-        <p class="text-muted">Sección en construcción para adjuntar fotos, videos o documentos.</p>
-        <button type="button" class="btn btn-outline-secondary px-4 fw-semibold mt-3" (click)="volver()">
-          ← Volver a Ubicación
-        </button>
+        <p class="text-muted">Cargue fotos, videos o documentos relacionados con el incidente.</p>
+
+        <label class="upload-area d-flex flex-column align-items-center justify-content-center text-center p-4" for="evidencia-input">
+          <span class="upload-icon mb-2" aria-hidden="true">↑</span>
+          <span class="fw-semibold">Seleccionar archivos</span>
+          <span class="small text-muted mt-1">Fotos, videos o documentos de hasta 10 MB</span>
+        </label>
+        <input
+          id="evidencia-input"
+          class="visually-hidden"
+          type="file"
+          multiple
+          accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.mov,.avi,.pdf,.doc,.docx,.txt"
+          (change)="seleccionarArchivos($event)"
+        />
+
+        @if (mensajeError) {
+          <div class="alert alert-danger mt-3 mb-0" role="alert">{{ mensajeError }}</div>
+        }
+
+        @if (archivos.length > 0) {
+          <div class="file-list mt-4" aria-label="Archivos adjuntos">
+            @for (archivo of archivos; track archivo.nombre + archivo.tamano) {
+              <div class="file-item d-flex align-items-center justify-content-between gap-3">
+                <span class="text-truncate">{{ archivo.nombre }}</span>
+                <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" (click)="eliminarArchivo(archivo)">
+                  Quitar
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+          <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" (click)="volver()">
+            ← Volver a Ubicación
+          </button>
+          <button
+            type="button"
+            class="btn btn-siguiente px-4 fw-bold"
+            [disabled]="archivos.length === 0"
+            (click)="avanzarSiguientePaso()"
+          >
+            Siguiente →
+          </button>
+        </div>
       </div>
     </div>
   </div>
