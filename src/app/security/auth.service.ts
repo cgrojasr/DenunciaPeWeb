@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
@@ -23,7 +24,7 @@ const IDENTIFIER_KEY = 'identifier';
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth/login`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http
@@ -32,30 +33,30 @@ export class AuthService {
   }
 
   saveSession(response: LoginResponse, identifier: string): void {
-    localStorage.setItem(TOKEN_KEY, response.accessToken);
-    localStorage.setItem(TOKEN_TYPE_KEY, response.tokenType);
-    localStorage.setItem(IDENTIFIER_KEY, identifier);
+    this.cookieService.set(TOKEN_KEY, response.accessToken);
+    this.cookieService.set(TOKEN_TYPE_KEY, response.tokenType);
+    this.cookieService.set(IDENTIFIER_KEY, identifier);
   }
 
   // Documento de identidad usado para iniciar sesión, reutilizable en otros formularios
   getIdentifier(): string | null {
-    return localStorage.getItem(IDENTIFIER_KEY);
+    return this.cookieService.get(IDENTIFIER_KEY) || null;
   }
 
   // Header listo para enviarse en peticiones autenticadas: Authorization: Bearer <token>
   getAuthorizationHeader(): string | null {
-    const token = localStorage.getItem(TOKEN_KEY);
-    const type = localStorage.getItem(TOKEN_TYPE_KEY) ?? 'Bearer';
+    const token = this.cookieService.get(TOKEN_KEY);
+    const type = this.cookieService.get(TOKEN_TYPE_KEY) || 'Bearer';
     return token ? `${type} ${token}` : null;
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem(TOKEN_KEY);
+    return this.cookieService.check(TOKEN_KEY);
   }
 
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(TOKEN_TYPE_KEY);
-    localStorage.removeItem(IDENTIFIER_KEY);
+    this.cookieService.delete(TOKEN_KEY);
+    this.cookieService.delete(TOKEN_TYPE_KEY);
+    this.cookieService.delete(IDENTIFIER_KEY);
   }
 }
