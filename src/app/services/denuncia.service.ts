@@ -29,8 +29,8 @@ export interface DatosDenunciado {
 }
 
 export interface UbicacionIncidente {
-  latitud: number;
-  longitud: number;
+  latitud: number | null;
+  longitud: number | null;
   direccion: string;
   referenciaAdicional?: string;
 }

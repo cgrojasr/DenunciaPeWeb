@@ -159,6 +159,63 @@ describe('Localizacion', () => {
     expect(component.form.get('direccion')?.value).toBe('Av. Arequipa 1234, Lima, Perú');
   });
 
+  it('should show an error message and allow manual address entry when permission is denied', () => {
+    const mockGeolocation = {
+      getCurrentPosition: vi.fn().mockImplementation((_success, error) => {
+        error({ code: 1, PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 });
+      }),
+    };
+    (navigator as any).geolocation = mockGeolocation;
+
+    component.usarUbicacionActual();
+
+    expect(component.geolocalizando).toBe(false);
+    expect(component.mensajeError).toContain('Permiso de ubicación denegado');
+    expect(component.markerPosition).toBeNull();
+
+    // El ciudadano puede ingresar la dirección manualmente
+    component.form.patchValue({ direccion: 'Av. Grau 100, Lima' });
+    expect(component.form.get('direccion')?.value).toBe('Av. Grau 100, Lima');
+    expect(component.form.get('direccion')?.disabled).toBe(false);
+  });
+
+  it('should show an error message when position is unavailable', () => {
+    const mockGeolocation = {
+      getCurrentPosition: vi.fn().mockImplementation((_success, error) => {
+        error({ code: 2, PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 });
+      }),
+    };
+    (navigator as any).geolocation = mockGeolocation;
+
+    component.usarUbicacionActual();
+
+    expect(component.mensajeError).toContain('Información de ubicación no disponible');
+    expect(component.markerPosition).toBeNull();
+  });
+
+  it('should show an error message when the geolocation request times out', () => {
+    const mockGeolocation = {
+      getCurrentPosition: vi.fn().mockImplementation((_success, error) => {
+        error({ code: 3, PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 });
+      }),
+    };
+    (navigator as any).geolocation = mockGeolocation;
+
+    component.usarUbicacionActual();
+
+    expect(component.mensajeError).toContain('Tiempo de espera agotado');
+    expect(component.markerPosition).toBeNull();
+  });
+
+  it('should show a generic error message when geolocation is not supported by the browser', () => {
+    (navigator as any).geolocation = undefined;
+
+    component.usarUbicacionActual();
+
+    expect(component.mensajeError).toContain('La geolocalización no está soportada');
+    expect(component.markerPosition).toBeNull();
+  });
+
   it('should handle search by address', () => {
     component.busquedaTexto = 'Av. Javier Prado 500';
     component.buscarPorDireccion();
@@ -175,6 +232,38 @@ describe('Localizacion', () => {
     expect(component.submitted).toBe(true);
     expect(navigateSpy).not.toHaveBeenCalled();
     expect(component.mensajeError).toBeTruthy();
+  });
+
+  it('should accept a manually entered address with valid format and advance without map coordinates', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    component.form.patchValue({
+      direccion: 'Av. Grau 123',
+      referenciaAdicional: 'Cerca al parque',
+    });
+
+    component.avanzarSiguientePaso();
+
+    expect(component.submitted).toBe(true);
+    expect(component.mensajeError).toBeNull();
+    expect(navigateSpy).toHaveBeenCalledWith(['/denuncia/evidencia']);
+
+    const ubicacion = denunciaService.obtenerUbicacion();
+    expect(ubicacion?.direccion).toBe('Av. Grau 123');
+    expect(ubicacion?.latitud).toBeNull();
+    expect(ubicacion?.longitud).toBeNull();
+  });
+
+  it('should reject a manually entered address with an invalid format', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    component.form.patchValue({ direccion: 'Miraflores' });
+
+    component.avanzarSiguientePaso();
+
+    expect(component.form.get('direccion')?.hasError('formatoInvalido')).toBe(true);
+    expect(navigateSpy).not.toHaveBeenCalled();
+    expect(component.mensajeError).toContain('formato válido');
   });
 
   it('should save location in DenunciaService and navigate to next step (/denuncia/evidencia) when valid', () => {

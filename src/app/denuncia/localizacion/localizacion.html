@@ -132,6 +132,14 @@
                   La dirección debe tener al menos 5 caracteres.
                 </div>
               }
+              @if (submitted && form.get('direccion')?.hasError('formatoInvalido')) {
+                <div class="invalid-feedback">
+                  Incluya el nombre de la vía (calle/avenida) y un número de referencia, por ejemplo: "Av. Grau 123".
+                </div>
+              }
+              <div class="form-text">
+                También puede ingresar la dirección manualmente sin usar el mapa o la geolocalización.
+              </div>
             </div>
 
             <div class="col-md-6">
@@ -169,9 +177,9 @@
                   />
                 </div>
               </div>
-              @if (submitted && (form.get('latitud')?.invalid || !markerPosition)) {
-                <p class="text-danger small mt-1 mb-0">
-                  Debe marcar la ubicación del incidente en el mapa.
+              @if (!markerPosition) {
+                <p class="text-muted small mt-1 mb-0">
+                  Opcional: marque un punto en el mapa o use la geolocalización para registrar coordenadas exactas.
                 </p>
               }
             </div>

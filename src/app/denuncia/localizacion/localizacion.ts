@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { Header } from '../../shared/header/header';
@@ -63,22 +71,35 @@ export class Localizacion implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
-      direccion: ['', [Validators.required, Validators.minLength(5)]],
+      direccion: ['', [Validators.required, Validators.minLength(5), this.formatoDireccionValidator]],
       referenciaAdicional: [''],
-      latitud: [null as number | null, Validators.required],
-      longitud: [null as number | null, Validators.required],
+      // No son obligatorias: el ciudadano puede registrar la ubicación solo con la dirección manual
+      latitud: [null as number | null],
+      longitud: [null as number | null],
     });
+  }
+
+  // Exige que la dirección tenga al menos una vía/calle y un número de referencia (formato mínimo válido)
+  private formatoDireccionValidator(control: AbstractControl): ValidationErrors | null {
+    const valor = (control.value ?? '').toString().trim();
+    if (!valor) {
+      return null;
+    }
+    const formatoValido = /[A-Za-zÀ-ÿ].*\d/.test(valor);
+    return formatoValido ? null : { formatoInvalido: true };
   }
 
   ngOnInit(): void {
     // Si ya existían datos guardados previamente, restaurarlos
     const ubicacionGuardada = this.denunciaService.obtenerUbicacion();
     if (ubicacionGuardada) {
-      this.markerPosition = {
-        lat: ubicacionGuardada.latitud,
-        lng: ubicacionGuardada.longitud,
-      };
-      this.center = { ...this.markerPosition };
+      if (ubicacionGuardada.latitud !== null && ubicacionGuardada.longitud !== null) {
+        this.markerPosition = {
+          lat: ubicacionGuardada.latitud,
+          lng: ubicacionGuardada.longitud,
+        };
+        this.center = { ...this.markerPosition };
+      }
       this.form.patchValue({
         direccion: ubicacionGuardada.direccion,
         referenciaAdicional: ubicacionGuardada.referenciaAdicional ?? '',
@@ -272,8 +293,8 @@ export class Localizacion implements OnInit {
   }
 
   volverPasoAnterior(): void {
-    // Guarda el progreso actual si hay alguno antes de volver
-    if (this.markerPosition) {
+    // Guarda el progreso actual si hay alguno antes de volver (con o sin coordenadas de mapa)
+    if (this.markerPosition || this.form.value.direccion) {
       this.denunciaService.guardarUbicacion({
         latitud: this.form.value.latitud,
         longitud: this.form.value.longitud,
@@ -287,8 +308,11 @@ export class Localizacion implements OnInit {
   avanzarSiguientePaso(): void {
     this.submitted = true;
 
-    if (this.form.invalid || !this.markerPosition) {
-      this.mensajeError = 'Por favor seleccione un punto en el mapa y complete la dirección.';
+    // Se acepta avanzar si hay un punto en el mapa o si se ingresó manualmente una dirección válida
+    if (this.form.invalid) {
+      this.mensajeError = this.form.get('direccion')?.hasError('formatoInvalido')
+        ? 'La dirección ingresada no tiene un formato válido. Incluya calle/avenida y número de referencia.'
+        : 'Por favor seleccione un punto en el mapa o ingrese una dirección válida.';
       this.form.markAllAsTouched();
       return;
     }
