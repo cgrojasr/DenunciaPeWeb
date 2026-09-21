@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { Header } from '../../shared/header/header';
 import { IndicadorPasos } from '../indicador-pasos/indicador-pasos';
 import { DenunciaService, EstadoDenuncia } from '../../services/denuncia.service';
-import { environment } from '../../../environments/environment';
 
 export interface CamposInvalidos {
   denunciante: boolean;
@@ -16,10 +14,6 @@ export interface CamposInvalidos {
   lugar: boolean;
   ubicacion: boolean;
   evidencias: boolean;
-}
-
-interface RespuestaEnvioDenuncia {
-  numeroDenuncia: string;
 }
 
 @Component({
@@ -43,13 +37,10 @@ export class Resumen implements OnInit {
   };
   enviando = false;
   errorEnvio: string | null = null;
-  enviado = false;
-  numeroDenuncia: string | null = null;
 
   constructor(
     private denunciaService: DenunciaService,
     private router: Router,
-    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -140,8 +131,8 @@ export class Resumen implements OnInit {
     this.enviando = true;
     this.errorEnvio = null;
 
-    this.http
-      .post<RespuestaEnvioDenuncia>(`${environment.apiUrl}/denuncias`, this.estado)
+    this.denunciaService
+      .enviarDenuncia(this.estado)
       .pipe(catchError(() => of(null)))
       .subscribe((respuesta) => {
         this.enviando = false;
@@ -151,14 +142,18 @@ export class Resumen implements OnInit {
           return;
         }
 
-        this.numeroDenuncia = respuesta.numeroDenuncia;
-        this.enviado = true;
-        this.denunciaService.limpiar();
-      });
-  }
+        const numeroDenuncia = respuesta.numeroDenuncia ?? null;
+        this.denunciaService.guardarResultadoEnvio({
+          numeroDenuncia,
+          fechaRegistro: new Date().toISOString(),
+        });
 
-  irAInicio(): void {
-    this.router.navigate(['/home']);
+        if (numeroDenuncia) {
+          this.denunciaService.limpiar();
+        }
+
+        this.router.navigate(['/denuncia/confirmacion']);
+      });
   }
 }
 

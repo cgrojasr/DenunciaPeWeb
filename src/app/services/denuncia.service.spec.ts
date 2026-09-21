@@ -1,11 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { DenunciaService } from './denuncia.service';
 
 describe('DenunciaService', () => {
   let service: DenunciaService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient()],
+    });
     service = TestBed.inject(DenunciaService);
   });
 

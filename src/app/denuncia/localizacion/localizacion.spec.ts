@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { provideRouter, Router } from '@angular/router';
 import { Localizacion } from './localizacion';
 import { DenunciaService } from '../../services/denuncia.service';
@@ -82,7 +83,7 @@ describe('Localizacion', () => {
 
     await TestBed.configureTestingModule({
       imports: [Localizacion],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient()],
     }).compileComponents();
 
     router = TestBed.inject(Router);

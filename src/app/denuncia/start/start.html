@@ -3,6 +3,7 @@
 <div class="denuncia-page py-4">
   <div class="container">
     <app-indicador-pasos [pasoActual]="1" />
+    <app-demo (mensajeEvent)="recibirmensaje($event)"></app-demo>
 
     <h1 class="h3 fw-bold mb-4">Formulario de denuncia</h1>
 

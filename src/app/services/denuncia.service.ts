@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface DatosDenunciante {
   nombres: string;
@@ -52,11 +55,23 @@ export interface EstadoDenuncia {
   evidencias?: EvidenciaArchivo[];
 }
 
+export interface RespuestaEnvioDenuncia {
+  numeroDenuncia?: string;
+}
+
+export interface ResultadoEnvioDenuncia {
+  numeroDenuncia: string | null;
+  fechaRegistro: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class DenunciaService {
   private estado: EstadoDenuncia = {};
+  private resultadoEnvio: ResultadoEnvioDenuncia | null = null;
+
+  constructor(private http: HttpClient) {}
 
   guardarDatosIniciales(datos: Partial<EstadoDenuncia>): void {
     this.estado = {
@@ -89,5 +104,21 @@ export class DenunciaService {
 
   limpiar(): void {
     this.estado = {};
+  }
+
+  enviarDenuncia(estado: EstadoDenuncia): Observable<RespuestaEnvioDenuncia> {
+    return this.http.post<RespuestaEnvioDenuncia>(`${environment.apiUrl}/denuncias`, estado);
+  }
+
+  guardarResultadoEnvio(resultado: ResultadoEnvioDenuncia): void {
+    this.resultadoEnvio = resultado;
+  }
+
+  obtenerResultadoEnvio(): ResultadoEnvioDenuncia | null {
+    return this.resultadoEnvio ? { ...this.resultadoEnvio } : null;
+  }
+
+  limpiarResultadoEnvio(): void {
+    this.resultadoEnvio = null;
   }
 }

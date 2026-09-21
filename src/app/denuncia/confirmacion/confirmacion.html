@@ -1,0 +1,62 @@
+<app-header />
+
+<div class="confirmacion-page py-4">
+  <div class="container">
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body p-4 text-center">
+        @if (exito) {
+          <div role="status">
+            <div class="confirmacion-icono mx-auto mb-3">✓</div>
+            <h1 class="h3 fw-bold text-success-dark mb-2">¡Denuncia registrada con éxito!</h1>
+            <p class="text-muted mb-1">Su denuncia ha sido enviada correctamente.</p>
+            <p class="mb-1">
+              Número de denuncia: <span class="fw-bold">{{ numeroDenuncia }}</span>
+            </p>
+            @if (fechaRegistro) {
+              <p class="text-muted mb-4">Fecha de registro: {{ fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}</p>
+            }
+            <button type="button" class="btn btn-siguiente px-4 fw-bold" (click)="finalizar()">
+              Finalizar y volver al inicio
+            </button>
+          </div>
+        } @else if (errorNumero) {
+          <div class="alert alert-warning" role="alert">
+            <p class="fw-semibold mb-2">Ocurrió un error al generar el número de denuncia.</p>
+            <p class="mb-0">Su denuncia fue recibida, pero no pudimos confirmar el número asignado. Intente obtener la confirmación nuevamente.</p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-siguiente px-4 fw-bold d-flex align-items-center gap-2 mx-auto"
+            [disabled]="reintentando"
+            (click)="reintentar()"
+          >
+            @if (reintentando) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Reintentando...</span>
+            } @else {
+              <span>Reintentar obtener confirmación</span>
+            }
+          </button>
+        } @else if (errorInesperado) {
+          <div class="alert alert-danger" role="alert">
+            <p class="fw-semibold mb-2">Ocurrió un error al cargar la pantalla de confirmación.</p>
+            <p class="mb-0">Por favor, intente cargar nuevamente la confirmación.</p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-siguiente px-4 fw-bold d-flex align-items-center gap-2 mx-auto"
+            [disabled]="reintentando"
+            (click)="reintentar()"
+          >
+            @if (reintentando) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Reintentando...</span>
+            } @else {
+              <span>Reintentar</span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

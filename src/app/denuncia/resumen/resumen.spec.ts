@@ -98,16 +98,16 @@ describe('Resumen', () => {
 
     expect(comp.enviando).toBe(false);
     expect(comp.errorEnvio).toContain('No se pudo enviar la denuncia');
-    expect(comp.enviado).toBe(false);
     expect(comp.esValido).toBe(true);
   });
 
-  it('should register the report and show the confirmation screen after a successful retry', () => {
+  it('should navigate to the confirmation screen and clear the state after a successful retry', () => {
     completarEstadoValido();
 
     const nuevaFixture = TestBed.createComponent(Resumen);
     nuevaFixture.detectChanges();
     const comp = nuevaFixture.componentInstance;
+    const navigateSpy = vi.spyOn(router, 'navigate');
 
     comp.enviarDenuncia();
     httpMock.expectOne(`${environment.apiUrl}/denuncias`).error(new ProgressEvent('error'));
@@ -116,9 +116,9 @@ describe('Resumen', () => {
     comp.enviarDenuncia();
     httpMock.expectOne(`${environment.apiUrl}/denuncias`).flush({ numeroDenuncia: 'DEN-2026-0001' });
 
-    expect(comp.enviado).toBe(true);
-    expect(comp.numeroDenuncia).toBe('DEN-2026-0001');
+    expect(navigateSpy).toHaveBeenCalledWith(['/denuncia/confirmacion']);
     expect(denunciaService.obtenerEstado()).toEqual({});
+    expect(denunciaService.obtenerResultadoEnvio()?.numeroDenuncia).toBe('DEN-2026-0001');
   });
 
   it('should navigate back to evidencia when clicking volver', () => {
@@ -128,15 +128,6 @@ describe('Resumen', () => {
     component.volver();
 
     expect(navigateSpy).toHaveBeenCalledWith(['/denuncia/evidencia']);
-  });
-
-  it('should navigate to /home when clicking irAInicio', () => {
-    const navigateSpy = vi.spyOn(router, 'navigate');
-    fixture.detectChanges();
-
-    component.irAInicio();
-
-    expect(navigateSpy).toHaveBeenCalledWith(['/home']);
   });
 });
 

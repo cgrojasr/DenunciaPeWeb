@@ -6,139 +6,125 @@
 
     <div class="card shadow-sm border-0 mb-4">
       <div class="card-body p-4">
-        @if (enviado) {
-          <div class="text-center py-4" role="status">
-            <div class="confirmacion-icono mx-auto mb-3">✓</div>
-            <h1 class="h3 fw-bold text-success-dark mb-2">¡Denuncia registrada con éxito!</h1>
-            <p class="text-muted mb-1">Su denuncia ha sido enviada correctamente.</p>
-            <p class="mb-4">
-              Número de denuncia: <span class="fw-bold">{{ numeroDenuncia }}</span>
-            </p>
-            <button type="button" class="btn btn-siguiente px-4 fw-bold" (click)="irAInicio()">
-              Volver al inicio
-            </button>
+        <h1 class="h3 fw-bold mb-1 text-success-dark">Resumen de la denuncia</h1>
+        <p class="text-muted">Verifique que toda la información sea correcta antes de enviar la denuncia.</p>
+
+        @if (errores.length > 0) {
+          <div class="alert alert-danger" role="alert">
+            <p class="fw-semibold mb-2">Se encontraron los siguientes problemas:</p>
+            <ul class="mb-0">
+              @for (error of errores; track error) {
+                <li>{{ error }}</li>
+              }
+            </ul>
           </div>
         } @else {
-          <h1 class="h3 fw-bold mb-1 text-success-dark">Resumen de la denuncia</h1>
-          <p class="text-muted">Verifique que toda la información sea correcta antes de enviar la denuncia.</p>
-
-          @if (errores.length > 0) {
-            <div class="alert alert-danger" role="alert">
-              <p class="fw-semibold mb-2">Se encontraron los siguientes problemas:</p>
-              <ul class="mb-0">
-                @for (error of errores; track error) {
-                  <li>{{ error }}</li>
-                }
-              </ul>
-            </div>
-          } @else {
-            <div class="alert alert-success" role="alert">
-              Todos los campos obligatorios están completos y tienen un formato válido.
-            </div>
-          }
-
-          @if (errorEnvio) {
-            <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
-              <div>{{ errorEnvio }}</div>
-              <button type="button" class="btn-close" (click)="errorEnvio = null" aria-label="Cerrar"></button>
-            </div>
-          }
-
-          <div class="row g-4">
-            <div class="col-md-6">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.denunciante">
-                <h2 class="h6 fw-bold text-success-dark">Datos del denunciante</h2>
-                <p class="mb-1"><span class="fw-semibold">Nombres:</span> {{ estado.denunciante?.nombres || 'No registrado' }}</p>
-                <p class="mb-1"><span class="fw-semibold">Apellidos:</span> {{ estado.denunciante?.apellidos || 'No registrado' }}</p>
-                <p class="mb-0"><span class="fw-semibold">Documento:</span> {{ estado.denunciante?.documento || 'No registrado' }}</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.contacto">
-                <h2 class="h6 fw-bold text-success-dark">Datos de contacto</h2>
-                <p class="mb-1"><span class="fw-semibold">Teléfono:</span> {{ estado.contacto?.telefono || 'No registrado' }}</p>
-                <p class="mb-1"><span class="fw-semibold">Dirección:</span> {{ estado.contacto?.direccion || 'No registrado' }}</p>
-                <p class="mb-0">
-                  <span class="fw-semibold">Ubigeo:</span>
-                  {{ estado.contacto?.region || '-' }} / {{ estado.contacto?.provincia || '-' }} / {{ estado.contacto?.distrito || '-' }}
-                </p>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.narracion">
-                <h2 class="h6 fw-bold text-success-dark">Narración de los hechos</h2>
-                <p class="mb-0">{{ estado.narracion || 'No registrada' }}</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.incidente">
-                <h2 class="h6 fw-bold text-success-dark">Fecha y hora del incidente</h2>
-                <p class="mb-1"><span class="fw-semibold">Fecha:</span> {{ estado.incidente?.fecha || 'No registrada' }}</p>
-                <p class="mb-0"><span class="fw-semibold">Hora:</span> {{ estado.incidente?.hora || 'No registrada' }}</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.lugar">
-                <h2 class="h6 fw-bold text-success-dark">Lugar del suceso</h2>
-                <p class="mb-0">{{ estado.lugar?.referencia || 'No registrado' }}</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="campo-resumen">
-                <h2 class="h6 fw-bold text-success-dark">Datos del denunciado (opcional)</h2>
-                <p class="mb-1"><span class="fw-semibold">Nombre o apodo:</span> {{ estado.denunciado?.nombreOApodo || 'No registrado' }}</p>
-                <p class="mb-0"><span class="fw-semibold">Características:</span> {{ estado.denunciado?.caracteristicas || 'No registrado' }}</p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.ubicacion">
-                <h2 class="h6 fw-bold text-success-dark">Ubicación en el mapa</h2>
-                <p class="mb-1"><span class="fw-semibold">Dirección:</span> {{ estado.ubicacion?.direccion || 'No registrada' }}</p>
-                <p class="mb-0"><span class="fw-semibold">Referencia adicional:</span> {{ estado.ubicacion?.referenciaAdicional || '-' }}</p>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.evidencias">
-                <h2 class="h6 fw-bold text-success-dark">Evidencias adjuntas</h2>
-                @if (estado.evidencias && estado.evidencias.length > 0) {
-                  <ul class="mb-0">
-                    @for (evidencia of estado.evidencias; track evidencia.nombre + evidencia.tamano) {
-                      <li>{{ evidencia.nombre }}</li>
-                    }
-                  </ul>
-                } @else {
-                  <p class="mb-0">No se adjuntaron evidencias.</p>
-                }
-              </div>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
-            <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" (click)="volver()" [disabled]="enviando">
-              ← Volver a Evidencias
-            </button>
-            <button
-              type="button"
-              class="btn btn-siguiente px-4 fw-bold d-flex align-items-center gap-2"
-              [disabled]="!esValido || enviando"
-              (click)="enviarDenuncia()"
-            >
-              @if (enviando) {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                <span>Enviando...</span>
-              } @else {
-                <span>Enviar denuncia</span>
-              }
-            </button>
+          <div class="alert alert-success" role="alert">
+            Todos los campos obligatorios están completos y tienen un formato válido.
           </div>
         }
+
+        @if (errorEnvio) {
+          <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
+            <div>{{ errorEnvio }}</div>
+            <button type="button" class="btn-close" (click)="errorEnvio = null" aria-label="Cerrar"></button>
+          </div>
+        }
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.denunciante">
+              <h2 class="h6 fw-bold text-success-dark">Datos del denunciante</h2>
+              <p class="mb-1"><span class="fw-semibold">Nombres:</span> {{ estado.denunciante?.nombres || 'No registrado' }}</p>
+              <p class="mb-1"><span class="fw-semibold">Apellidos:</span> {{ estado.denunciante?.apellidos || 'No registrado' }}</p>
+              <p class="mb-0"><span class="fw-semibold">Documento:</span> {{ estado.denunciante?.documento || 'No registrado' }}</p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.contacto">
+              <h2 class="h6 fw-bold text-success-dark">Datos de contacto</h2>
+              <p class="mb-1"><span class="fw-semibold">Teléfono:</span> {{ estado.contacto?.telefono || 'No registrado' }}</p>
+              <p class="mb-1"><span class="fw-semibold">Dirección:</span> {{ estado.contacto?.direccion || 'No registrado' }}</p>
+              <p class="mb-0">
+                <span class="fw-semibold">Ubigeo:</span>
+                {{ estado.contacto?.region || '-' }} / {{ estado.contacto?.provincia || '-' }} / {{ estado.contacto?.distrito || '-' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.narracion">
+              <h2 class="h6 fw-bold text-success-dark">Narración de los hechos</h2>
+              <p class="mb-0">{{ estado.narracion || 'No registrada' }}</p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.incidente">
+              <h2 class="h6 fw-bold text-success-dark">Fecha y hora del incidente</h2>
+              <p class="mb-1"><span class="fw-semibold">Fecha:</span> {{ estado.incidente?.fecha || 'No registrada' }}</p>
+              <p class="mb-0"><span class="fw-semibold">Hora:</span> {{ estado.incidente?.hora || 'No registrada' }}</p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.lugar">
+              <h2 class="h6 fw-bold text-success-dark">Lugar del suceso</h2>
+              <p class="mb-0">{{ estado.lugar?.referencia || 'No registrado' }}</p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="campo-resumen">
+              <h2 class="h6 fw-bold text-success-dark">Datos del denunciado (opcional)</h2>
+              <p class="mb-1"><span class="fw-semibold">Nombre o apodo:</span> {{ estado.denunciado?.nombreOApodo || 'No registrado' }}</p>
+              <p class="mb-0"><span class="fw-semibold">Características:</span> {{ estado.denunciado?.caracteristicas || 'No registrado' }}</p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.ubicacion">
+              <h2 class="h6 fw-bold text-success-dark">Ubicación en el mapa</h2>
+              <p class="mb-1"><span class="fw-semibold">Dirección:</span> {{ estado.ubicacion?.direccion || 'No registrada' }}</p>
+              <p class="mb-0"><span class="fw-semibold">Referencia adicional:</span> {{ estado.ubicacion?.referenciaAdicional || '-' }}</p>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="campo-resumen" [class.campo-invalido]="camposInvalidos.evidencias">
+              <h2 class="h6 fw-bold text-success-dark">Evidencias adjuntas</h2>
+              @if (estado.evidencias && estado.evidencias.length > 0) {
+                <ul class="mb-0">
+                  @for (evidencia of estado.evidencias; track evidencia.nombre + evidencia.tamano) {
+                    <li>{{ evidencia.nombre }}</li>
+                  }
+                </ul>
+              } @else {
+                <p class="mb-0">No se adjuntaron evidencias.</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+          <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" (click)="volver()" [disabled]="enviando">
+            ← Volver a Evidencias
+          </button>
+          <button
+            type="button"
+            class="btn btn-siguiente px-4 fw-bold d-flex align-items-center gap-2"
+            [disabled]="!esValido || enviando"
+            (click)="enviarDenuncia()"
+          >
+            @if (enviando) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Enviando...</span>
+            } @else {
+              <span>Enviar denuncia</span>
+            }
+          </button>
+        </div>
       </div>
     </div>
   </div>

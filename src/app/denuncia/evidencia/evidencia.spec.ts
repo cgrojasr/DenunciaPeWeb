@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { Evidencia } from './evidencia';
 import { DenunciaService } from '../../services/denuncia.service';
 
@@ -12,7 +13,7 @@ describe('Evidencia', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Evidencia],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient()],
     }).compileComponents();
 
     denunciaService = TestBed.inject(DenunciaService);
