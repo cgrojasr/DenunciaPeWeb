@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface DatosDenunciante {
@@ -64,6 +64,13 @@ export interface ResultadoEnvioDenuncia {
   fechaRegistro: string;
 }
 
+export interface DenunciaResumen {
+  id: number;
+  fechaDenuncia: string;
+  idTipoDenuncia: number | null;
+  referencia?: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -107,7 +114,50 @@ export class DenunciaService {
   }
 
   enviarDenuncia(estado: EstadoDenuncia): Observable<RespuestaEnvioDenuncia> {
-    return this.http.post<RespuestaEnvioDenuncia>(`${environment.apiUrl}/denuncias`, estado);
+    return this.http
+      .post<{ id: number }>(`${environment.apiUrl}/denuncias`, this.construirSolicitud(estado))
+      .pipe(map((respuesta) => ({ numeroDenuncia: String(respuesta.id) })));
+  }
+
+  private construirSolicitud(estado: EstadoDenuncia) {
+    const documento = estado.denunciante?.documento ?? '';
+    const fechaIncidente = new Date(`${estado.incidente?.fecha}T${estado.incidente?.hora}`);
+
+    return {
+      fechaDenuncia: new Date().toISOString(),
+      narracion: estado.narracion,
+      denunciante: {
+        tipoDocumento: /^\d{8}$/.test(documento) ? 'DNI' : 'CE',
+        nroDocumento: documento,
+        nombres: estado.denunciante?.nombres,
+        apellidos: estado.denunciante?.apellidos,
+        nroTelefono: estado.contacto?.telefono,
+        direccion: estado.contacto?.direccion,
+        ubigeo: estado.contacto?.distrito,
+      },
+      denunciado: {
+        nombreApelativo: estado.denunciado?.nombreOApodo || null,
+        caracteristica: estado.denunciado?.caracteristicas || null,
+      },
+      incidente: {
+        fechaIncidente: fechaIncidente.toISOString(),
+        ubigeoIncidente: estado.contacto?.distrito,
+        direccionIncidente: estado.ubicacion?.direccion,
+        latitud: String(estado.ubicacion?.latitud ?? ''),
+        longitud: String(estado.ubicacion?.longitud ?? ''),
+        referencia: estado.lugar?.referencia,
+      },
+      evidencias: (estado.evidencias ?? []).map((e) => ({
+        nombreArchivo: e.nombre,
+        url: `archivo://${encodeURIComponent(e.nombre)}`,
+      })),
+    };
+  }
+
+  obtenerPorNroDocumento(nroDocumento: string): Observable<DenunciaResumen[]> {
+    return this.http.get<DenunciaResumen[]>(
+      `${environment.apiUrl}/denuncias/denunciante/${encodeURIComponent(nroDocumento)}`,
+    );
   }
 
   guardarResultadoEnvio(resultado: ResultadoEnvioDenuncia): void {

@@ -6,11 +6,13 @@ import { Localizacion } from './denuncia/localizacion/localizacion';
 import { Evidencia } from './denuncia/evidencia/evidencia';
 import { Resumen } from './denuncia/resumen/resumen';
 import { Confirmacion } from './denuncia/confirmacion/confirmacion';
+import { Home as HistoryHome } from './history/home/home';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'home', component: Start },
+  { path: 'history', component: HistoryHome },
   { path: 'denuncia', component: DenunciaStart },
   { path: 'denuncia/localizacion', component: Localizacion },
   { path: 'denuncia/evidencia', component: Evidencia },

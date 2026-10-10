@@ -22,7 +22,7 @@ const IDENTIFIER_KEY = 'identifier';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = `${environment.apiUrl}/auth/login`;
+  private readonly apiUrl = `${environment.apiUrlSecurity}/auth/login`;
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 

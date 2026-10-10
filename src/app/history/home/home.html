@@ -1,0 +1,36 @@
+<app-header />
+
+<main class="history-page container py-4">
+  <h1 class="h3 mb-4">Mis denuncias</h1>
+
+  @if (cargando()) {
+    <p>Cargando denuncias...</p>
+  } @else if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  } @else if (denuncias().length === 0) {
+    <div class="alert alert-info" role="alert">Aún no has registrado denuncias.</div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>N.º denuncia</th>
+            <th>Fecha de denuncia</th>
+            <th>Tipo</th>
+            <th>Referencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of denuncias(); track d.id) {
+            <tr>
+              <td>{{ d.id }}</td>
+              <td>{{ d.fechaDenuncia | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ d.idTipoDenuncia ?? '-' }}</td>
+              <td>{{ d.referencia || '-' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</main>

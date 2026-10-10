@@ -20,9 +20,9 @@ export interface Region {
 
 @Injectable({ providedIn: 'root' })
 export class UbigeoService {
-	private readonly apiUrl = `${environment.apiUrl}/ubigeo/distritos`;
-	private readonly provinciasApiUrl = `${environment.apiUrl}/ubigeo/provincias`;
-	private readonly regionesApiUrl = `${environment.apiUrl}/ubigeo/regiones`;
+	private readonly apiUrl = `${environment.apiUrlSecurity}/ubigeo/distritos`;
+	private readonly provinciasApiUrl = `${environment.apiUrlSecurity}/ubigeo/provincias`;
+	private readonly regionesApiUrl = `${environment.apiUrlSecurity}/ubigeo/regiones`;
 
 	constructor(private readonly http: HttpClient) {}
 
