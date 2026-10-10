@@ -6,11 +6,10 @@ import { Header } from '../../shared/header/header';
 import { IndicadorPasos } from '../indicador-pasos/indicador-pasos';
 import { Distrito, Provincia, Region, UbigeoService } from '../../services/ubigeo-service';
 import { DenunciaService } from '../../services/denuncia.service';
-import { Demo } from '../demo/demo';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, Header, IndicadorPasos, Demo],
+  imports: [ReactiveFormsModule, Header, IndicadorPasos],
   selector: 'app-start',
   styleUrl: './start.css',
   templateUrl: './start.html',
@@ -217,9 +216,5 @@ export class Start implements OnInit {
     });
 
     this.router.navigate(['/denuncia/localizacion']);
-  }
-
-  recibirmensaje(mensaje: string) {
-    console.log('Mensaje recibido del componente hijo:', mensaje);
   }
 }
