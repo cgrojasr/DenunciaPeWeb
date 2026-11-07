@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Header } from '../../shared/header/header';
-import { IndicadorPasos } from '../indicador-pasos/indicador-pasos';
+import { IndicadorPasos } from '../../shared/indicador-pasos/indicador-pasos';
 import { DenunciaService, EvidenciaArchivo } from '../../services/denuncia.service';
 
 const TAMANO_MAXIMO_ARCHIVO = 10 * 1024 * 1024;

@@ -12,7 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { Header } from '../../shared/header/header';
-import { IndicadorPasos } from '../indicador-pasos/indicador-pasos';
+import { IndicadorPasos } from '../../shared/indicador-pasos/indicador-pasos';
 import { DenunciaService } from '../../services/denuncia.service';
 import { GoogleMapsLoaderService } from '../../services/google-maps-loader.service';
 

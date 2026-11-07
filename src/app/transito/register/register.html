@@ -1,0 +1,100 @@
+<app-header />
+
+<main class="transito-page py-4">
+  <div class="container">
+    <app-indicador-pasos [pasoActual]="1" />
+    <h1 class="h3 fw-bold mb-3">Registrar infracción de tránsito</h1>
+    <p>Complete los datos de la infracción observada. Los campos marcados como opcionales pueden dejarse vacíos.</p>
+
+    @if (errorBorrador) {
+      <div class="alert alert-danger" role="alert">{{ errorBorrador }}</div>
+    }
+    @if (submitted && form.invalid) {
+      <div class="alert alert-danger" role="alert">Revise los campos señalados antes de continuar.</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <fieldset class="card mb-4">
+        <div class="card-body">
+          <legend class="h5">Información de la infracción</legend>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="tipo" class="form-label">Tipo de infracción</label>
+              <select id="tipo" class="form-select" formControlName="tipo" required [class.is-invalid]="mostrarError('tipo')" [attr.aria-invalid]="mostrarError('tipo')" aria-describedby="tipo-error">
+                <option value="">Seleccione un tipo</option>
+                @for (tipo of tipos; track tipo.codigo) {
+                  <option [value]="tipo.codigo">{{ tipo.nombre }}</option>
+                }
+              </select>
+              @if (mostrarError('tipo')) { <p id="tipo-error" class="invalid-feedback">Seleccione un tipo de infracción.</p> }
+            </div>
+            @if (form.controls.tipo.value === 'otro') {
+              <div class="col-md-6">
+                <label for="otroTipo" class="form-label">Especifique la infracción</label>
+                <input id="otroTipo" class="form-control" formControlName="otroTipo" required [class.is-invalid]="mostrarError('otroTipo')" [attr.aria-invalid]="mostrarError('otroTipo')" aria-describedby="otroTipo-error" />
+                @if (mostrarError('otroTipo')) { <p id="otroTipo-error" class="invalid-feedback">Especifique el tipo de infracción.</p> }
+              </div>
+            }
+            <div class="col-md-6">
+              <label for="fecha" class="form-label">Fecha de ocurrencia</label>
+              <input id="fecha" type="date" class="form-control" formControlName="fecha" required [class.is-invalid]="mostrarError('fecha') || (submitted && (form.hasError('fechaHoraFutura') || form.hasError('fechaHoraInvalida')))" [attr.aria-invalid]="mostrarError('fecha') || (submitted && (form.hasError('fechaHoraFutura') || form.hasError('fechaHoraInvalida')))" aria-describedby="fecha-error fechaHora-error" />
+              @if (mostrarError('fecha')) { <p id="fecha-error" class="invalid-feedback">Ingrese la fecha de ocurrencia.</p> }
+            </div>
+            <div class="col-md-6">
+              <label for="hora" class="form-label">Hora de ocurrencia</label>
+              <input id="hora" type="time" class="form-control" formControlName="hora" required [class.is-invalid]="mostrarError('hora') || (submitted && (form.hasError('fechaHoraFutura') || form.hasError('fechaHoraInvalida')))" [attr.aria-invalid]="mostrarError('hora') || (submitted && (form.hasError('fechaHoraFutura') || form.hasError('fechaHoraInvalida')))" aria-describedby="hora-error fechaHora-error" />
+              @if (mostrarError('hora')) { <p id="hora-error" class="invalid-feedback">Ingrese la hora de ocurrencia.</p> }
+            </div>
+            @if (submitted && (form.hasError('fechaHoraFutura') || form.hasError('fechaHoraInvalida'))) {
+              <p id="fechaHora-error" class="text-danger mb-0">Ingrese una fecha y hora válidas que no sean futuras.</p>
+            }
+            <div class="col-12">
+              <label for="descripcion" class="form-label">Descripción de los hechos</label>
+              <textarea id="descripcion" class="form-control" rows="4" formControlName="descripcion" required [class.is-invalid]="mostrarError('descripcion')" [attr.aria-invalid]="mostrarError('descripcion')" aria-describedby="descripcion-ayuda descripcion-error"></textarea>
+              <div id="descripcion-ayuda" class="form-text">Describa los hechos con al menos 20 caracteres.</div>
+              @if (mostrarError('descripcion')) { <p id="descripcion-error" class="invalid-feedback">Ingrese una descripción de al menos 20 caracteres.</p> }
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4">
+        <div class="card-body">
+          <legend class="h5">Información del vehículo</legend>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="placa" class="form-label">Placa</label>
+              <input id="placa" class="form-control" formControlName="placa" required maxlength="7" autocapitalize="characters" [class.is-invalid]="mostrarError('placa')" [attr.aria-invalid]="mostrarError('placa')" aria-describedby="placa-ayuda placa-error" />
+              <div id="placa-ayuda" class="form-text">Ejemplo: ABC-123 o 1234-AB.</div>
+              @if (mostrarError('placa')) { <p id="placa-error" class="invalid-feedback">Ingrese una placa válida de 6 caracteres.</p> }
+            </div>
+            <div class="col-md-3">
+              <label for="marca" class="form-label">Marca (opcional)</label>
+              <input id="marca" class="form-control" formControlName="marca" />
+            </div>
+            <div class="col-md-3">
+              <label for="modelo" class="form-label">Modelo (opcional)</label>
+              <input id="modelo" class="form-control" formControlName="modelo" />
+            </div>
+            <div class="col-md-3">
+              <label for="color" class="form-label">Color (opcional)</label>
+              <input id="color" class="form-control" formControlName="color" />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card mb-4">
+        <div class="card-body">
+          <legend class="h5">Información complementaria</legend>
+          <label for="observaciones" class="form-label">Observaciones (opcional)</label>
+          <textarea id="observaciones" class="form-control" rows="3" formControlName="observaciones"></textarea>
+        </div>
+      </fieldset>
+      <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-success px-4">Siguiente</button>
+        <button type="button" class="btn btn-outline-danger" (click)="descartar()">Descartar borrador</button>
+      </div>
+    </form>
+  </div>
+</main>

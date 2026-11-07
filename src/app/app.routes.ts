@@ -7,6 +7,8 @@ import { Evidencia } from './denuncia/evidencia/evidencia';
 import { Resumen } from './denuncia/resumen/resumen';
 import { Confirmacion } from './denuncia/confirmacion/confirmacion';
 import { Home as HistoryHome } from './history/home/home';
+import { Register as TransitoRegister } from './transito/register/register';
+import { Ubicacion as TransitoUbicacion } from './transito/ubicacion/ubicacion';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,4 +20,6 @@ export const routes: Routes = [
   { path: 'denuncia/evidencia', component: Evidencia },
   { path: 'denuncia/resumen', component: Resumen },
   { path: 'denuncia/confirmacion', component: Confirmacion },
+  { path: 'transito/register', component: TransitoRegister },
+  { path: 'transito/ubicacion', component: TransitoUbicacion },
 ];

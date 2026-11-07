@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { Header } from '../../shared/header/header';
-import { IndicadorPasos } from '../indicador-pasos/indicador-pasos';
+import { IndicadorPasos } from '../../shared/indicador-pasos/indicador-pasos';
 import { DenunciaService, EstadoDenuncia } from '../../services/denuncia.service';
 
 export interface CamposInvalidos {
@@ -156,4 +156,3 @@ export class Resumen implements OnInit {
       });
   }
 }
-

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment';
+import { TransitoMockService } from '../services/transito/transito-mock.service';
 
 export interface LoginRequest {
   identifier: string;
@@ -24,7 +25,11 @@ const IDENTIFIER_KEY = 'identifier';
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrlSecurity}/auth/login`;
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private transito: TransitoMockService,
+  ) {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http
@@ -55,6 +60,11 @@ export class AuthService {
   }
 
   logout(): void {
+    try {
+      this.transito.descartarBorrador();
+    } catch (error) {
+      console.error('No se pudo descartar el borrador de tránsito al cerrar sesión:', error);
+    }
     this.cookieService.delete(TOKEN_KEY);
     this.cookieService.delete(TOKEN_TYPE_KEY);
     this.cookieService.delete(IDENTIFIER_KEY);

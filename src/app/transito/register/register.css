@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.transito-page {
+  background: #f2f7f2;
+  min-height: calc(100vh - 56px);
+}
+
+legend {
+  color: #006414;
+  font-weight: 700;
+}

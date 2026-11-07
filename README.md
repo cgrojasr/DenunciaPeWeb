@@ -44,6 +44,21 @@ To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use th
 ng test
 ```
 
+## Registro de tránsito (HU-FE-01)
+
+El formulario está disponible en `/transito/register` y usa un catálogo y un
+servicio de borrador simulados, sin enviar datos al servidor. El borrador se
+guarda en `sessionStorage` de la pestaña, se recupera al volver al formulario y
+se elimina al descartarlo desde el registro o cerrar sesión. El siguiente paso
+abre el componente de ubicación de tránsito, que todavía no registra una
+ubicación ni envía una denuncia.
+La marca, el modelo y el color del vehículo, así como las observaciones,
+son opcionales; la placa sigue siendo obligatoria.
+
+Hasta contar con las reglas oficiales se aplica un mínimo de 20 caracteres
+para la descripción, igual que en el formulario general, y se aceptan placas
+de seis caracteres alfanuméricos, con o sin guion (3-3 o 4-2).
+
 ## Running end-to-end tests
 
 For end-to-end (e2e) testing, run:
